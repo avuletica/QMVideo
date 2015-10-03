@@ -13,6 +13,30 @@ Window {
     minimumHeight: 720
     color: "white"
 
+    // needs fix only if should be needed here
+    onHeightChanged:   {
+    if(mainArea.visibility === Window.Maximized) {
+        mainArea.showFullScreen()
+        console.log("Maximize DETECTED")
+    }
+    else {
+        console.log("Screen change DETECTED")
+    }
+    }
+
+    // event handler for escape character (exit full screen)
+    Item {
+        anchors.fill: parent
+        focus: true
+        Keys.onPressed: {
+            if (event.key == Qt.Key_Escape) {
+                console.log("Escape detected!");
+                mainArea.showNormal()
+                event.accepted = true;
+            }
+        }
+    }
+
     MediaPlayer {
         id: player
         source: ""
@@ -28,11 +52,17 @@ Window {
     }
 
     MouseArea {
-        id: videArea
+        id: rightClickEvent
         anchors.fill: parent
         acceptedButtons: Qt.RightButton
-        onClicked: pieMenu.popup(mouseX, mouseY), console.log("y")
+        onClicked: pieMenu.popup(mouseX, mouseY), console.log("Right Click DETECTED")
+    }
 
+    MouseArea {
+        id: doubleLeftClickEvent
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton
+        //onClicked: mainArea.flags.Qt.FramelessWindowHint
     }
 
     PieMenu {
@@ -63,6 +93,7 @@ Window {
         anchors.bottomMargin: 0
         width: 500
         height: 40
+        opacity: 0.70
         color: "lightgray"
 
         RowLayout {
@@ -109,7 +140,18 @@ Window {
                 value: 0.5
                 onValueChanged: player.volume = audioSlider.value
             }
-
+        }
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled:true
+            onEntered: {
+                console.log("ENTERED toolbar mousearea");
+                controlArea.opacity = 0.70
+            }
+            onExited: {
+                console.log("EXITED toolbar mousearea");
+                controlArea.opacity = 0.0
+            }
         }
         //  File opener PROTOTYPE
         FileDialog {
