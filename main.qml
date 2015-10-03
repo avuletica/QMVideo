@@ -91,47 +91,48 @@ Window {
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottomMargin: 0
-        width: 500
-        height: 40
-        opacity: 0.70
+        width: 400
+        height: 50
+        opacity: 0.40
         color: "lightgray"
+        radius: 10
 
         RowLayout {
             anchors.centerIn: parent
             ToolButton {
+                text: "Backward"
+                iconSource: "backward.png"
+                onClicked: {
+                    player.seek(player.position - 10000)
+                }
+            }
+            ToolButton {
                 text: "Play"
                 iconName: "aa"
-                //iconSource: "icons/play.png"
+                iconSource: "play.png"
                 onClicked: {
                     player.play()
                 }
             }
             ToolButton {
+                text: "Forward"
+                iconSource: "forward.png"
+                onClicked: {
+                    player.seek(player.position + 10000)
+                }
+            }
+            ToolButton {
                 text: "Pause"
-                //iconSource: "icons/pause.png"
+                iconSource: "pause.png"
                 onClicked: {
                     player.pause()
                 }
             }
             ToolButton {
                 text: "Stop"
-                //iconSource: "icons/stop.png"
+                iconSource: "stop.png"
                 onClicked: {
                     player.stop()
-                }
-            }
-            ToolButton {
-                text: "Backward"
-                //iconSource: "icons/backward.png"
-                onClicked: {
-                    player.seek(player.position - 10000)
-                }
-            }
-            ToolButton {
-                text: "Forward"
-                //iconSource: "icons/forward.png"
-                onClicked: {
-                    player.seek(player.position + 10000)
                 }
             }
             Slider {
@@ -141,18 +142,19 @@ Window {
                 onValueChanged: player.volume = audioSlider.value
             }
         }
+        /* PROTOTYPE [control buttons doesn't work if this is enabled]
         MouseArea {
             anchors.fill: parent
             hoverEnabled:true
             onEntered: {
                 console.log("ENTERED toolbar mousearea");
-                controlArea.opacity = 0.70
+                controlArea.opacity = 0.40
             }
             onExited: {
                 console.log("EXITED toolbar mousearea");
                 controlArea.opacity = 0.0
             }
-        }
+        }*/
         //  File opener PROTOTYPE
         FileDialog {
             id: fileDialog
