@@ -9,21 +9,20 @@ import QtQuick.Extras 1.4
 Window {
     id: mainArea
     visible: true
-    minimumWidth: 1200
-    minimumHeight: 720
+    width: 1200
+    height: 720
     color: "white"
 
     // needs fix only if should be needed here
     onHeightChanged:   {
-    if(mainArea.visibility === Window.Maximized) {
-        mainArea.showFullScreen()
-        console.log("Maximize DETECTED")
+        if(mainArea.visibility === Window.Maximized) {
+            mainArea.showFullScreen()
+            console.log("Maximize DETECTED")
+        }
+        else {
+            console.log("Screen change DETECTED")
+        }
     }
-    else {
-        console.log("Screen change DETECTED")
-    }
-    }
-
     // event handler for escape character (exit full screen)
     Item {
         anchors.fill: parent
@@ -36,13 +35,11 @@ Window {
             }
         }
     }
-
     MediaPlayer {
         id: player
         source: ""
         autoPlay: true
     }
-
     VideoOutput {
         id: videoOutput
         source: player
@@ -50,55 +47,63 @@ Window {
         // fillmode - the video is scaled uniformly to fill, cropping if necessary
         fillMode: VideoOutput.PreserveAspectCrop
     }
-
     MouseArea {
         id: rightClickEvent
         anchors.fill: parent
         acceptedButtons: Qt.RightButton
         onClicked: pieMenu.popup(mouseX, mouseY), console.log("Right Click DETECTED")
     }
-
     MouseArea {
-        id: doubleLeftClickEvent
+        id: mouseArea1
+        anchors.bottomMargin: 50
         anchors.fill: parent
-        acceptedButtons: Qt.LeftButton
-        //onClicked: mainArea.flags.Qt.FramelessWindowHint
-    }
 
+        hoverEnabled: true
+        onEntered: {
+            console.log(containsMouse)
+            controlArea.opacity = 0.0
+        }
+        onExited: {
+            console.log(containsMouse)
+            controlArea.opacity = 0.4
+        }
+
+    }
     PieMenu {
         id: pieMenu
+
         MenuItem {
             text: "Open File"
             onTriggered:{
                 fileDialog.open()
                 player.source=fileDialog.fileUrl
                 player.play()
-                //  player.metaData.subTitle = "/home/ante/Downloads/test.srt"
             }
         }
         MenuItem {
-            text: "Load subtittle"
+            text: "Load subtitle"
             onTriggered: print("Action 2")
         }
         MenuItem {
-            text: "Settings"
-            onTriggered: print("Action 3")
+            text: "Action 3"
+            onTriggered: print("Settings")
         }
     }
-    // Area for controls ( audio/play/stop..)
     Rectangle {
         id: controlArea
-        anchors.bottom: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottomMargin: 0
+        x: 400
+        y: 650
         width: 400
         height: 50
-        opacity: 0.40
+        opacity: 0.4
         color: "lightgray"
         radius: 10
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
 
         RowLayout {
-            anchors.centerIn: parent
+            anchors.horizontalCenter: parent.horizontalCenter
+
             ToolButton {
                 text: "Backward"
                 iconSource: "backward.png"
@@ -141,21 +146,8 @@ Window {
                 value: 0.5
                 onValueChanged: player.volume = audioSlider.value
             }
+
         }
-        /* PROTOTYPE [control buttons doesn't work if this is enabled]
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled:true
-            onEntered: {
-                console.log("ENTERED toolbar mousearea");
-                controlArea.opacity = 0.40
-            }
-            onExited: {
-                console.log("EXITED toolbar mousearea");
-                controlArea.opacity = 0.0
-            }
-        }*/
-        //  File opener PROTOTYPE
         FileDialog {
             id: fileDialog
             title: "Please choose a file"
