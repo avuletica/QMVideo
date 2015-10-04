@@ -11,16 +11,13 @@ Window {
     visible: true
     width: 1200
     height: 720
-    color: "white"
+    minimumWidth: 400
+    minimumHeight: 300
 
-    // needs fix only if should be needed here
-    onHeightChanged:   {
+    onHeightChanged: {
         if(mainArea.visibility === Window.Maximized) {
             mainArea.showFullScreen()
             console.log("Maximize DETECTED")
-        }
-        else {
-            console.log("Screen change DETECTED")
         }
     }
     // event handler for escape character (exit full screen)
@@ -68,11 +65,17 @@ Window {
             controlArea.opacity = 0.4
         }
 
+        Image {
+            id: backgroundimage
+            width: Window.width
+            height: Window.height
+            source: "logo.png"
+       }
     }
     PieMenu {
         id: pieMenu
-
         MenuItem {
+
             text: "Open File"
             onTriggered:{
                 fileDialog.open()
@@ -85,8 +88,8 @@ Window {
             onTriggered: print("Action 2")
         }
         MenuItem {
-            text: "Action 3"
-            onTriggered: print("Settings")
+            text: "Settings"
+            onTriggered: loader.source = "options.qml"
         }
     }
     Rectangle {
@@ -96,7 +99,7 @@ Window {
         width: 400
         height: 50
         opacity: 0.4
-        color: "lightgray"
+        color: "white"
         radius: 10
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
@@ -138,6 +141,7 @@ Window {
                 iconSource: "stop.png"
                 onClicked: {
                     player.stop()
+                    backgroundimage.source="logo.png"
                 }
             }
             Slider {
@@ -154,11 +158,16 @@ Window {
             onAccepted: {
                 player.pause()
                 player.source=fileDialog.fileUrl
+                backgroundimage.source=""
             }
             Component.onCompleted: visible = false
         }
 
     }
+    //  Loader is used to dynamically load QML components.
+    Loader {
+        id: loader
+      }
 
 }
 
