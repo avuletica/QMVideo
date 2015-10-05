@@ -5,6 +5,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.0
 import QtQuick.Dialogs 1.2
 import QtQuick.Extras 1.4
+import QtQuick.Controls.Styles 1.4
 
 Window {
     id: mainArea
@@ -41,12 +42,30 @@ Window {
           1 - playing
           2 - paused
         */
+        onPositionChanged: {
+            progressbarSlider.value = player.position/player.duration
+            //  Converting miliseconds to minutes and seconds.
+            var currentTime = player.position
+            var currentMin = (currentTime/1000/60) << 0
+            var currentSec = (currentTime/1000) % 60
+            currentSec = currentSec.toFixed(0)
+
+            var totalTime = player.duration
+            var totalMin =(totalTime/1000/60) << 0
+            var totalSec = (totalTime/1000) % 60
+            totalSec = totalSec.toFixed(0)
+            totalSec.Math.abs(totalSec)
+
+            progressText.text = currentMin + ':'+ currentSec + ' / ' + totalMin + ':' + totalSec
+        }
         onPlaybackStateChanged: {
             if(player.playbackState === 0 || player.playbackState === 2) {
                 playPauseButton.iconSource="play.png"
+                backgroundimage.source=""
             }
             else {
                 playPauseButton.iconSource="pause.png"
+                backgroundimage.source=""
             }
         }
     }
@@ -71,13 +90,16 @@ Window {
         hoverEnabled: true
         onEntered: {
             console.log(containsMouse)
-            controlArea.opacity = 0.0
+            controlArea.opacity = 0
+            progressbarSlider.opacity = 0
+            progressText.opacity = 0
         }
         onExited: {
             console.log(containsMouse)
             controlArea.opacity = 0.4
+            progressbarSlider.opacity = 1
+            progressText.opacity = 1
         }
-
         Image {
             id: backgroundimage
             width: Window.width
@@ -87,8 +109,9 @@ Window {
     }
     PieMenu {
         id: pieMenu
+        x: 533
+        y: 188
         MenuItem {
-
             text: "Open File"
             onTriggered:{
                 fileDialog.open()
@@ -105,21 +128,62 @@ Window {
             onTriggered: loader.source = "options.qml"
         }
     }
+    Slider {
+        id: progressbarSlider
+        y: 652
+        width: 250
+        anchors.horizontalCenterOffset: -50
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 50
+
+        style: SliderStyle {
+            groove: Rectangle {
+                implicitWidth: 200
+                implicitHeight: 8
+                color: "red"
+                radius: 8
+            }
+            handle: Rectangle {
+                anchors.centerIn: parent
+                color: control.pressed ? "white" : "lightgray"
+                border.color: "gray"
+                border.width: 2
+                implicitWidth: 18
+                implicitHeight: 18
+                radius: 12
+            }
+        }
+    }
+    Text {
+        id: progressText
+        x: 681
+        y: 654
+        color: "red"
+        text: qsTr("0:0 / 0:0")
+        anchors.bottom: parent.bottom
+        anchors.rightMargin: -95
+        anchors.right: progressbarSlider.right
+
+        anchors.bottomMargin: 52
+        font.bold: true
+        font.pixelSize: 12
+    }
     Rectangle {
         id: controlArea
         x: 400
         y: 650
-        width: 400
+        width: 350
         height: 50
         opacity: 0.4
         color: "white"
-        radius: 10
+        radius: 2
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
 
         RowLayout {
-            anchors.horizontalCenter: parent.horizontalCenter
-
+            width: 250
+            anchors.centerIn: parent
             ToolButton {
                 text: "Backward"
                 iconSource: "backward.png"
@@ -149,7 +213,6 @@ Window {
                     player.seek(player.position + 10000)
                 }
             }
-
             ToolButton {
                 text: "Stop"
                 iconSource: "stop.png"
@@ -164,7 +227,6 @@ Window {
                 value: 0.5
                 onValueChanged: player.volume = audioSlider.value
             }
-
         }
         FileDialog {
             id: fileDialog
@@ -176,12 +238,13 @@ Window {
             }
             Component.onCompleted: visible = false
         }
-
     }
     //  Loader is used to dynamically load QML components.
     Loader {
         id: loader
     }
+
+
 
 }
 
