@@ -36,6 +36,19 @@ Window {
         id: player
         source: ""
         autoPlay: true
+        /* playbackState:
+          0 - stopped
+          1 - playing
+          2 - paused
+        */
+        onPlaybackStateChanged: {
+            if(player.playbackState === 0 || player.playbackState === 2) {
+                playPauseButton.iconSource="play.png"
+            }
+            else {
+                playPauseButton.iconSource="pause.png"
+            }
+        }
     }
     VideoOutput {
         id: videoOutput
@@ -70,7 +83,7 @@ Window {
             width: Window.width
             height: Window.height
             source: "logo.png"
-       }
+        }
     }
     PieMenu {
         id: pieMenu
@@ -115,11 +128,18 @@ Window {
                 }
             }
             ToolButton {
+                id: playPauseButton
                 text: "Play"
                 iconName: "aa"
                 iconSource: "play.png"
                 onClicked: {
-                    player.play()
+                    console.log(player.playbackState)
+                    if(player.playbackState === 0 || player.playbackState === 2) {
+                        player.play()
+                    }
+                    else  {
+                        player.pause()
+                    }
                 }
             }
             ToolButton {
@@ -129,13 +149,7 @@ Window {
                     player.seek(player.position + 10000)
                 }
             }
-            ToolButton {
-                text: "Pause"
-                iconSource: "pause.png"
-                onClicked: {
-                    player.pause()
-                }
-            }
+
             ToolButton {
                 text: "Stop"
                 iconSource: "stop.png"
@@ -167,7 +181,7 @@ Window {
     //  Loader is used to dynamically load QML components.
     Loader {
         id: loader
-      }
+    }
 
 }
 
