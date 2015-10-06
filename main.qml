@@ -18,7 +18,6 @@ Window {
     onHeightChanged: {
         if(mainArea.visibility === Window.Maximized) {
             mainArea.showFullScreen()
-            console.log("Maximize DETECTED")
         }
     }
     // event handler for escape character (exit full screen)
@@ -27,7 +26,6 @@ Window {
         focus: true
         Keys.onPressed: {
             if (event.key == Qt.Key_Escape) {
-                console.log("Escape detected!");
                 mainArea.showNormal()
                 event.accepted = true;
             }
@@ -42,21 +40,25 @@ Window {
           1 - playing
           2 - paused
         */
+
         onPositionChanged: {
             progressbarSlider.value = player.position/player.duration
             //  Converting miliseconds to minutes and seconds.
             var currentTime = player.position
-            var currentMin = (currentTime/1000/60) << 0
+            var currentMin = Math.floor(currentTime/1000/60)
             var currentSec = (currentTime/1000) % 60
             currentSec = currentSec.toFixed(0)
 
             var totalTime = player.duration
-            var totalMin =(totalTime/1000/60) << 0
+            var totalMin =Math.floor(totalTime/1000/60)
             var totalSec = (totalTime/1000) % 60
             totalSec = totalSec.toFixed(0)
-            totalSec.Math.abs(totalSec)
 
             progressText.text = currentMin + ':'+ currentSec + ' / ' + totalMin + ':' + totalSec
+
+            if(player.position === 0) {
+                progressText.text = '0:0 / 0:0'
+            }
         }
         onPlaybackStateChanged: {
             if(player.playbackState === 0 || player.playbackState === 2) {
@@ -80,7 +82,7 @@ Window {
         id: rightClickEvent
         anchors.fill: parent
         acceptedButtons: Qt.RightButton
-        onClicked: pieMenu.popup(mouseX, mouseY), console.log("Right Click DETECTED")
+        onClicked: pieMenu.popup(mouseX, mouseY)
     }
     MouseArea {
         id: mouseArea1
@@ -89,13 +91,11 @@ Window {
 
         hoverEnabled: true
         onEntered: {
-            console.log(containsMouse)
             controlArea.opacity = 0
             progressbarSlider.opacity = 0
             progressText.opacity = 0
         }
         onExited: {
-            console.log(containsMouse)
             controlArea.opacity = 0.4
             progressbarSlider.opacity = 1
             progressText.opacity = 1
@@ -154,6 +154,10 @@ Window {
                 radius: 12
             }
         }
+        on__HandlePosChanged: {
+            player.seek(progressbarSlider.value * player.duration)
+
+        }
     }
     Text {
         id: progressText
@@ -197,7 +201,6 @@ Window {
                 iconName: "aa"
                 iconSource: "play.png"
                 onClicked: {
-                    console.log(player.playbackState)
                     if(player.playbackState === 0 || player.playbackState === 2) {
                         player.play()
                     }
@@ -243,8 +246,5 @@ Window {
     Loader {
         id: loader
     }
-
-
-
 }
 
