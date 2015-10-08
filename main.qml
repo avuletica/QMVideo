@@ -40,7 +40,6 @@ Window {
           1 - playing
           2 - paused
         */
-
         onPositionChanged: {
             progressbarSlider.value = player.position/player.duration
             //  Converting miliseconds to minutes and seconds.
@@ -96,7 +95,7 @@ Window {
             progressText.opacity = 0
         }
         onExited: {
-            controlArea.opacity = 0.4
+            controlArea.opacity = 0.6
             progressbarSlider.opacity = 1
             progressText.opacity = 1
         }
@@ -154,10 +153,8 @@ Window {
                 radius: 12
             }
         }
-        on__HandlePosChanged: {
-            player.seek(progressbarSlider.value * player.duration)
-
-        }
+        onPressedChanged:  player.seek(progressbarSlider.value * player.duration)
+        updateValueWhileDragging: true
     }
     Text {
         id: progressText
@@ -179,7 +176,7 @@ Window {
         y: 650
         width: 350
         height: 50
-        opacity: 0.4
+        opacity: 0.6
         color: "white"
         radius: 2
         anchors.bottom: parent.bottom
@@ -247,4 +244,3 @@ Window {
         id: loader
     }
 }
-
