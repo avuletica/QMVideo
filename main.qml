@@ -25,8 +25,17 @@ Window {
         anchors.fill: parent
         focus: true
         Keys.onPressed: {
-            if (event.key == Qt.Key_Escape) {
+            if (event.key === Qt.Key_Escape) {
                 mainArea.showNormal()
+                event.accepted = true;
+            }
+            else if(event.key === Qt.Key_Space) {
+                if(player.playbackState === 0 || player.playbackState === 2) {
+                    player.play()
+                }
+                else  {
+                    player.pause()
+                }
                 event.accepted = true;
             }
         }
@@ -82,6 +91,12 @@ Window {
         anchors.fill: parent
         acceptedButtons: Qt.RightButton
         onClicked: pieMenu.popup(mouseX, mouseY)
+    }
+    MouseArea {
+        id: midDoubleClickEvent
+        anchors.fill: parent
+        acceptedButtons: Qt.MiddleButton
+        onDoubleClicked: mainArea.showFullScreen();
     }
     MouseArea {
         id: mouseArea1
