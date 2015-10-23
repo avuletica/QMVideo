@@ -96,7 +96,14 @@ Window {
         id: midDoubleClickEvent
         anchors.fill: parent
         acceptedButtons: Qt.MiddleButton
-        onDoubleClicked: mainArea.showFullScreen();
+        onDoubleClicked: {
+            if(mainArea.visibility === Window.FullScreen){
+                mainArea.showNormal();
+            }
+            else{
+                mainArea.showFullScreen();
+            }
+        }
     }
     MouseArea {
         id: mouseArea1
